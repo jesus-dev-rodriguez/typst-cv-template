@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cv-schema.org/v1/cv.schema.json",
+  "title": "Curriculum Vitae Universal Schema",
+  "description": "Esquema formal y estandarizado para la generación dinámica de CVs estilo Harvard en Typst.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "datos_personales",
+    "secciones"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Ruta o URI al archivo de esquema JSON para habilitar autocompletado y validación."
+    },
+    "plantilla": {
+      "type": "string",
+      "enum": [
+        "harvard",
+        "modern"
+      ],
+      "default": "harvard",
+      "description": "Plantilla visual para maquetar el documento CV (harvard o modern)."
+    },
+    "datos_personales": {
+      "type": "object",
+      "description": "Información personal y de contacto del candidato.",
+      "additionalProperties": false,
+      "required": [
+        "nombre_completo",
+        "contacto"
+      ],
+      "properties": {
+        "nombre_completo": {
+          "type": "string",
+          "description": "Nombre y apellidos completos del candidato."
+        },
+        "titulo": {
+          "type": "string",
+          "description": "Título profesional, carrera en curso o especialidad visible bajo el nombre."
+        },
+        "foto": {
+          "type": "string",
+          "description": "Ruta a archivo de imagen local (ej. 'assets/foto.jpg') o URI en Base64 ('data:image/jpeg;base64,...') para el avatar de perfil (soportado en plantillas como 'modern')."
+        },
+        "fecha_nacimiento": {
+          "type": "string",
+          "description": "Fecha de nacimiento (opcional, ej. '1995-12-12')."
+        },
+        "contacto": {
+          "description": "Lista de medios de contacto y perfiles web profesionales (Ubicación, Teléfono, Email, LinkedIn, GitHub, Portafolio, etc.). En el estándar Harvard, todas las redes y contactos se consolidan en este único bloque para la cabecera.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "tipo",
+              "valor"
+            ],
+            "properties": {
+              "tipo": {
+                "type": "string",
+                "description": "Identificador del contacto o red (ej. ubicacion, telefono, email, linkedin, github, portfolio, blog)."
+              },
+              "valor": {
+                "type": "string",
+                "description": "Texto visible del enlace o dato (ej. 'linkedin/usuario', 'github/usuario', '+54 9 388...')."
+              },
+              "url": {
+                "type": "string",
+                "description": "Enlace interactivo opcional con protocolo (ej. 'mailto:...', 'https://linkedin.com/in/...', 'https://github.com/...')."
+              }
+            }
+          }
+        }
+      }
+    },
+    "secciones": {
+      "type": "array",
+      "description": "Lista ordenada de secciones que compondrán el CV. El orden en este arreglo define el orden visual en el documento.",
+      "items": {
+        "oneOf": [
+          {
+            "title": "Sección de Texto (Narrativo)",
+            "description": "Párrafos justificados para Objetivo Profesional, Perfil, Filosofía de Trabajo, etc.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "titulo",
+              "tipo",
+              "contenido"
+            ],
+            "properties": {
+              "titulo": {
+                "type": "string",
+                "description": "Título visible de la sección en mayúsculas (ej. 'OBJETIVO PROFESIONAL')."
+              },
+              "tipo": {
+                "type": "string",
+                "const": "texto",
+                "description": "Tipo de maquetación: bloque de texto continuo."
+              },
+              "contenido": {
+                "type": "string",
+                "description": "Texto del párrafo corrido."
+              }
+            }
+          },
+          {
+            "title": "Sección de Entradas (Timeline Harvard)",
+            "description": "Entradas cronológicas de doble nivel para Experiencia Laboral, Formación Académica, Premios, Proyectos, Voluntariado.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "titulo",
+              "tipo",
+              "items"
+            ],
+            "properties": {
+              "titulo": {
+                "type": "string",
+                "description": "Título visible de la sección en mayúsculas (ej. 'FORMACIÓN ACADÉMICA', 'EXPERIENCIA LABORAL')."
+              },
+              "tipo": {
+                "type": "string",
+                "const": "entradas",
+                "description": "Tipo de maquetación: entradas cronológicas con alineación izquierda/derecha y viñetas."
+              },
+              "items": {
+                "type": "array",
+                "description": "Lista de entradas que componen la sección.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "primario_izq": {
+                      "type": "string",
+                      "description": "Texto destacado en negrita a la izquierda (ej. Empresa, Universidad, Evento)."
+                    },
+                    "primario_der": {
+                      "type": "string",
+                      "description": "Período o fecha a la derecha (ej. '2023 - Presente', '2025-10-14')."
+                    },
+                    "secundario_izq": {
+                      "type": "string",
+                      "description": "Subtítulo en cursiva a la izquierda (ej. Cargo, Título obtenido, Distinción)."
+                    },
+                    "secundario_der": {
+                      "type": "string",
+                      "description": "Ubicación o detalle secundario a la derecha (ej. 'Remoto', 'Jujuy, Argentina')."
+                    },
+                    "descripcion": {
+                      "type": "string",
+                      "description": "Breve párrafo descriptivo de la entrada (opcional)."
+                    },
+                    "vinetas": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Lista de logros o responsabilidades con viñetas asociadas a la entrada."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "title": "Sección Agrupada (Categorías)",
+            "description": "Categorías con elementos o tags para Habilidades, Certificaciones por Institución, Idiomas.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "titulo",
+              "tipo",
+              "grupos"
+            ],
+            "properties": {
+              "titulo": {
+                "type": "string",
+                "description": "Título visible de la sección en mayúsculas (ej. 'HABILIDADES', 'CERTIFICACIONES Y CURSOS')."
+              },
+              "tipo": {
+                "type": "string",
+                "const": "agrupado",
+                "description": "Tipo de maquetación: grupos con categoría en negrita y elementos separados por viñetas o comas."
+              },
+              "grupos": {
+                "type": "array",
+                "description": "Grupos de elementos categorizados.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "categoria",
+                    "elementos"
+                  ],
+                  "properties": {
+                    "categoria": {
+                      "type": "string",
+                      "description": "Nombre de la categoría en negrita (ej. 'Habilidades Técnicas', 'Digital House', 'Idiomas')."
+                    },
+                    "elementos": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Lista de etiquetas, tecnologías o cursos que componen este grupo."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "title": "Sección de Lista Simple",
+            "description": "Lista directa de viñetas para Pasatiempos, Lecturas Recomendadas, Referencias, etc.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "titulo",
+              "tipo",
+              "elementos"
+            ],
+            "properties": {
+              "titulo": {
+                "type": "string",
+                "description": "Título visible de la sección en mayúsculas (ej. 'PASATIEMPOS E INTERESES', 'LECTURAS')."
+              },
+              "tipo": {
+                "type": "string",
+                "const": "lista",
+                "description": "Tipo de maquetación: lista de viñetas directas."
+              },
+              "elementos": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Lista de viñetas que componen la sección."
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

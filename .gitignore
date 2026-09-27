@@ -1,0 +1,6 @@
+# Carpeta de salida de compilación
+build/
+
+# Archivos temporales o generados sueltos
+*.pdf
+preview*.png

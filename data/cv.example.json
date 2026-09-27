@@ -1,0 +1,167 @@
+{
+  "$schema": "../schema/cv.schema.json",
+  "plantilla": "harvard",
+  "datos_personales": {
+    "nombre_completo": "Carlos Mendoza",
+    "titulo": "Ingeniero de Software | Desarrollador Full Stack & Cloud",
+    "foto": "assets/avatar.png",
+    "contacto": [
+      {
+        "tipo": "ubicacion",
+        "valor": "Buenos Aires, Argentina (Remoto)"
+      },
+      {
+        "tipo": "telefono",
+        "valor": "+54 9 11 5555-4321"
+      },
+      {
+        "tipo": "email",
+        "valor": "carlos.mendoza.dev@email.com",
+        "url": "mailto:carlos.mendoza.dev@email.com"
+      },
+      {
+        "tipo": "linkedin",
+        "valor": "linkedin/carlos-mendoza",
+        "url": "https://linkedin.com/in/carlos-mendoza"
+      },
+      {
+        "tipo": "github",
+        "valor": "github/carlosmendoza",
+        "url": "https://github.com/carlosmendoza"
+      },
+      {
+        "tipo": "portfolio",
+        "valor": "carlosmendoza.dev",
+        "url": "https://carlosmendoza.dev"
+      }
+    ],
+    "fecha_nacimiento": "1994-08-20"
+  },
+  "secciones": [
+    {
+      "titulo": "PERFIL PROFESIONAL",
+      "tipo": "texto",
+      "contenido": "Ingeniero de Software con más de 4 años de experiencia diseñando y construyendo aplicaciones web distribuidas y APIs de alto rendimiento. Especializado en arquitectura orientada a microservicios, optimización de bases de datos relacionales y buenas prácticas de ingeniería de software (Clean Architecture, DDD, CI/CD). Pasión por el trabajo en equipo, la excelencia técnica y el desarrollo ágil."
+    },
+    {
+      "titulo": "EXPERIENCIA LABORAL",
+      "tipo": "entradas",
+      "items": [
+        {
+          "primario_izq": "Tech Innovations Inc.",
+          "primario_der": "Enero 2023 - Presente",
+          "secundario_izq": "Desarrollador Backend Senior (Go / PostgreSQL)",
+          "secundario_der": "Remoto, Argentina",
+          "vinetas": [
+            "Lideré la migración de un monolito heredado a microservicios en Go, reduciendo los tiempos de respuesta P99 en un 40%.",
+            "Diseñé e implementé pipelines de CI/CD automatizados con GitHub Actions y Docker, acelerando los despliegues a producción de semanales a diarios.",
+            "Mentoría técnica a 4 desarrolladores junior en buenas prácticas de arquitectura limpia, testing unitario y revisiones de código."
+          ]
+        },
+        {
+          "primario_izq": "Digital Solutions Studio",
+          "primario_der": "Febrero 2021 - Diciembre 2022",
+          "secundario_izq": "Desarrollador Full Stack (React / Node.js)",
+          "secundario_der": "Buenos Aires, Argentina",
+          "vinetas": [
+            "Desarrollo de paneles administrativos de analítica en tiempo real utilizando Next.js, TypeScript y Tailwind CSS.",
+            "Integración de pasarelas de pago (Stripe, Mercado Pago) procesando más de 15,000 transacciones mensuales de forma segura y tolerante a fallos."
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "FORMACIÓN ACADÉMICA",
+      "tipo": "entradas",
+      "items": [
+        {
+          "primario_izq": "Universidad Nacional de Jujuy, Facultad de Ingeniería",
+          "primario_der": "2016 - 2021",
+          "secundario_izq": "Ingeniería Informática",
+          "secundario_der": "San Salvador de Jujuy, Argentina",
+          "vinetas": [
+            "Graduado con honores (Promedio general: 8.9/10).",
+            "Proyecto de graduación: Arquitectura de telemetría IoT en tiempo real para optimización de recursos hídricos."
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "PROYECTOS DESTACADOS",
+      "tipo": "entradas",
+      "items": [
+        {
+          "primario_izq": "OpenDoc — Generador de Documentación Técnica",
+          "primario_der": "2024",
+          "secundario_izq": "Go, WebAssembly, Typst",
+          "secundario_der": "github.com/carlosmendoza/opendoc",
+          "vinetas": [
+            "Herramienta CLI de código abierto con más de 600 estrellas en GitHub para generar documentación de sistemas en PDF de manera reproducible."
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "HABILIDADES Y CERTIFICACIONES",
+      "tipo": "agrupado",
+      "grupos": [
+        {
+          "categoria": "Lenguajes & Backend",
+          "elementos": [
+            "Go",
+            "TypeScript",
+            "Python",
+            "PostgreSQL",
+            "Redis",
+            "REST APIs",
+            "GraphQL"
+          ]
+        },
+        {
+          "categoria": "Frontend & UI",
+          "elementos": [
+            "React",
+            "Next.js",
+            "Tailwind CSS",
+            "HTML5/CSS3"
+          ]
+        },
+        {
+          "categoria": "DevOps & Cloud",
+          "elementos": [
+            "Docker",
+            "Kubernetes",
+            "AWS (EC2, S3, RDS)",
+            "GitHub Actions",
+            "Linux / Bash",
+            "Git"
+          ]
+        },
+        {
+          "categoria": "Certificaciones",
+          "elementos": [
+            "Scrum Master Certified (SMC)",
+            "AWS Certified Cloud Practitioner",
+            "Design Thinking"
+          ]
+        },
+        {
+          "categoria": "Idiomas",
+          "elementos": [
+            "Español (Nativo)",
+            "Inglés (C1 - Avanzado profesional)"
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "PASATIEMPOS E INTERESES",
+      "tipo": "lista",
+      "elementos": [
+        "Ajedrez competitivo y pensamiento estratégico.",
+        "Lecturas sobre sistemas distribuidos, concurrencia y arquitectura de software.",
+        "Contribución a proyectos de código abierto y comunidades tecnológicas locales."
+      ]
+    }
+  ]
+}
