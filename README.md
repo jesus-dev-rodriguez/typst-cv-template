@@ -100,7 +100,22 @@ make png DATA=cv.example.json TEMPLATE=modern
 make pdf PAPER=us-letter
 ```
 
-### 5. Limpiar artefactos generados
+### 5. Empaquetado para Producción (`dist/cv-engine.typ`)
+Compila todo el proyecto modular en un único archivo autocontenido listo para usar en SPAs web sin servidor, microservicios o APIs:
+```bash
+# Generar el bundle único en dist/cv-engine.typ
+make bundle
+
+# Ejecutar la batería de pruebas autónoma del bundle
+make test-bundle
+```
+
+Cualquier sistema externo solo necesita este archivo y el JSON del usuario:
+```bash
+typst compile --input data="usuario.json" dist/cv-engine.typ salida.pdf
+```
+
+### 6. Limpiar artefactos generados
 ```bash
 make clean
 ```
@@ -114,3 +129,19 @@ Consulta la guía detallada [**`docs/SCHEMA.md`**](docs/SCHEMA.md) para ver ejem
 2. Entradas cronológicas (`tipo: "entradas"`)
 3. Grupos categorizados (`tipo: "agrupado"`)
 4. Listas de viñetas (`tipo: "lista"`)
+
+---
+
+## 🤝 Cómo Contribuir con Nuevas Plantillas
+
+El proyecto está diseñado como un ecosistema abierto y extensible. Si deseas diseñar y enviar una nueva plantilla visual (`minimal`, `tech`, `academic`, etc.):
+
+1. Consulta la [**Guía de Contribución de Plantillas**](docs/CONTRIBUTING_TEMPLATES.md).
+2. Crea tu carpeta en `src/templates/<tu_plantilla>/` e implementa las 4 primitivas de maquetación universales.
+3. El empaquetador `scripts/bundle.py` detectará automáticamente tu plantilla sin requerir cambios en el código de empaquetado.
+4. Antes de abrir tu Pull Request, asegúrate de que pasen todos los tests locales:
+   ```bash
+   make all png
+   make test-bundle
+   ```
+

@@ -42,10 +42,14 @@ cv/
 │           ├── components/        # Header adaptativo con foto, cv_entry, section_title
 │           ├── renderers/         # 4 renderizadores con estética moderna
 │           └── template.typ       # Función modern_cv(cv-data, paper: "a4")
+├── dist/                          # Artefactos empaquetados para producción
+│   └── cv-engine.typ              # Archivo único autocontenido (distribuible para SPAs/APIs)
+├── scripts/
+│   └── bundle.py                  # Compilador/empaquetador monolítico modular hacia dist/
 ├── build/                         # Artefactos de salida compilados (ignorado por git)
 │   ├── cv.pdf                     # PDF final generado
 │   └── preview-1.png              # Vista previa en imagen
-├── Makefile                       # Automatización hacia build/ (all, watch, png, clean)
+├── Makefile                       # Automatización (all, watch, png, bundle, test-bundle, clean)
 ├── main.typ                       # Router raíz: selecciona harvard_cv o modern_cv según cv-data.plantilla
 ├── .agents/skills/typst/          # Skill especializada de Typst 0.15+ (sintaxis moderna, CLI)
 └── README.md                      # Documentación pública para el usuario humano
@@ -88,6 +92,8 @@ flowchart TD
 - **Compilar PDF (por defecto):** `make` (o `make pdf` -> genera `build/cv.pdf`)
 - **Modo Watch (desarrollo en vivo):** `make watch`
 - **Generar preview PNG:** `make png` (-> genera `build/preview-1.png`)
+- **Empaquetar bundle de producción:** `make bundle` (-> genera `dist/cv-engine.typ`)
+- **Validar suite de pruebas del bundle:** `make test-bundle`
 - **Limpiar artefactos:** `make clean`
 - **Ambiente Linux con Typst en Snap:** Si la ruta del proyecto está montada en `/mnt/`, Typst requiere:
   ```bash
@@ -110,3 +116,5 @@ flowchart TD
 | **ADR-008** | 2026-09-26 | Desacoplamiento de Schema Web y adopción de modelo local portable | Evitar puntos únicos de falla (repos privados, cambios de URL, falta de conexión) mediante rutas relativas y `.vscode/settings.json`, permitiendo a organizaciones usar schemas corporativos propios. |
 | **ADR-009** | 2026-09-26 | Arquitectura Multi-Plantilla con Router Dinámico y Soporte de Foto | Modularizar `src/templates/` (`harvard`, `modern`) y `src/core/media.typ` permitiendo alternar templates y avatares (archivos locales o Base64) desde el JSON con retrocompatibilidad absoluta. |
 | **ADR-010** | 2026-09-26 | Soporte Universal de Entrada con `sys.inputs` y Parametrización en `Makefile` | Desacoplar la E/S de Typst permitiendo cargar datos desde archivos externos o strings JSON en memoria (APIs/SPAs), y seleccionar plantilla (`TEMPLATE=`) y dataset (`DATA=`) desde la línea de comandos y el Makefile. |
+| **ADR-012** | 2026-09-26 | Estandarización de Contrato de Contribución Abierta de Plantillas | Publicar guía formal para diseñadores (`docs/CONTRIBUTING_TEMPLATES.md`) para extender el catálogo de plantillas con autodescubrimiento en `bundle.py` y validación local de compilación. |
+

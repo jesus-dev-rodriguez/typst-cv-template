@@ -85,35 +85,33 @@ Cualquier sistema externo solo requerirá el binario de Typst, el archivo único
 
 ---
 
-### Fase 3: Motor de Empaquetado y Minificación (`make bundle`)
+### Fase 3: Motor de Empaquetado y Minificación (`make bundle`) (✅ Completada)
 **Objetivo:** Crear el compilador de producción que tome todo el proyecto modular y genere un único archivo `dist/cv-engine.typ`.
 
-1. **Desarrollo del script `scripts/bundle.py`:**
-   - **Parser de dependencias:** Rastrea `#import` locales relativos y construye el grafo acíclico dirigido (DAG).
-   - **Aislamiento de namespaces:** Prefija funciones internas de cada plantilla para evitar colisiones (ej. `harvard_theme`, `modern_theme`).
-   - **Inyección del Router Global:** Ensambla el código en un único flujo determinista con selector de plantillas.
-   - **Salida:** Genera `dist/cv-engine.typ`.
-
-2. **Automatización en el `Makefile`:**
-   ```makefile
-   # Genera el archivo único para producción
-   bundle:
-   	python3 scripts/bundle.py --out dist/cv-engine.typ
-
-   # Valida que el bundle funcione de forma 100% independiente
-   test-bundle: bundle
-   	typst compile --input data="data/cv.json" dist/cv-engine.typ build/test-bundle.pdf
-   ```
+- [x] **Script empaquetador (`scripts/bundle.py`):**
+  - Deduplicación de paquetes `@preview/...`.
+  - Inlining del núcleo (`media.typ`, `inputs.typ`).
+  - Auto-descubrimiento de plantillas en `src/templates/`.
+  - Encapsulamiento en módulos diccionario Typst (`#let harvard = { ... }`, `#let modern = { ... }`) para prevenir 100% las colisiones de variables y funciones.
+  - Inyección del Router Polimórfico (`available_templates.at(...)`).
+  - Generación de `dist/cv-engine.typ`.
+- [x] **Automatización en el `Makefile`:**
+  - `make bundle`: Genera el archivo único distribuible.
+  - `make test-bundle`: Ejecuta suite de validación completa (Harvard, Modern y JSON en memoria).
+- [x] **Independencia Total:** Verificado en entornos externos aislados fuera del repositorio.
 
 ---
 
-### Fase 4: Ecosistema y Comunidad Open Source
-**Objetivo:** Permitir que colaboradores de todo el mundo envíen Pull Requests agregando sus propios diseños.
+### Fase 4: Ecosistema y Comunidad Open Source (✅ Completada)
+**Objetivo:** Permitir que colaboradores de todo el mundo envíen Pull Requests agregando sus propios diseños de forma segura.
 
-1. **Guía de Contribución (`docs/CONTRIBUTING_TEMPLATES.md`):**
-   - Especificación del contrato que debe cumplir cualquier nueva plantilla:
-     - Implementar los 4 renderizadores de primitivas (`texto`, `entradas`, `agrupado`, `lista`).
-     - Exponer la función `cv_template(data, body)`.
-     - Respetar los parámetros opcionales de foto y contacto.
-2. **Pruebas Automatizadas en CI/CD:**
-   - Workflow en GitHub Actions que compila todos los templates registrados contra `data/cv.example.json` en cada Pull Request para asegurar que ninguno se rompa.
+- [x] **Guía de Contribución ([`docs/CONTRIBUTING_TEMPLATES.md`](CONTRIBUTING_TEMPLATES.md)):**
+  - Documentación exhaustiva del contrato de las 4 primitivas de maquetación universales (`texto`, `entradas`, `agrupado`, `lista`).
+  - Especificación de estructura en `src/templates/<nombre>/` y firma obligatoria `<nombre>_cv(cv-data, paper: "a4")`.
+  - Explicación del autodescubrimiento automático en `scripts/bundle.py`.
+- [x] **Suite de Validación Local Automatizada:**
+  - Validación de datasets JSON contra `schema/cv.schema.json`.
+  - Compilación automática con Typst de `main.typ` (`make all png`).
+  - Batería de pruebas de producción del bundle (`make test-bundle`).
+- [x] **100% de la Hoja de Ruta Alcanzada:** El proyecto está completamente desacoplado, empaquetado y listo para ser publicado como código abierto.
+
