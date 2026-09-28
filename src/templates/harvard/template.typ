@@ -39,6 +39,8 @@
     leading: 0.6em,
   )
 
+  show link: set text(fill: color-link)
+
   // Renderizar encabezado automáticamente si hay datos personales
   if "datos_personales" in cv-data {
     cv_header(cv-data.datos_personales)
@@ -49,7 +51,7 @@
     let tipo = seccion.at("tipo", default: "texto")
     let titulo = seccion.at("titulo", default: "")
 
-    if tipo == "texto" [
+    if tipo == "texto" or tipo == "markdown" [
       #render_text(titulo, seccion.at("contenido", default: ""))
     ] else if tipo == "entradas" [
       #render_entries(titulo, seccion.at("items", default: ()))

@@ -1,5 +1,6 @@
 #import "../components/section_title.typ": section_title
 #import "../theme.typ": *
+#import "../../../core/markdown.typ": render_md
 
 /// Renderiza una lista simple de viñetas estilo Modern
 #let render_list(title, items) = {
@@ -8,7 +9,7 @@
 
     block(width: 100%, spacing: space-item)[
       #list(
-        ..items.map(it => text(size: size-body, fill: color-secondary, it)),
+        ..items.map(it => text(size: size-body, fill: color-secondary, render_md(it))),
         spacing: 4pt,
         tight: true
       )

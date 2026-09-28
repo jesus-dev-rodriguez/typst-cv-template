@@ -1,5 +1,6 @@
 #import "../components/section_title.typ": section_title
 #import "../theme.typ": *
+#import "../../../core/markdown.typ": render_md
 
 /// Renderiza una sección de elementos agrupados por categoría (habilidades, certificaciones, idiomas)
 #let render_grouped(title, groups) = {
@@ -12,12 +13,12 @@
 
       block(width: 100%, spacing: space-item)[
         #if cat != "" [
-          #text(weight: "bold", size: size-body, cat + ": ")
+          #text(weight: "bold", size: size-body)[#render_md(cat): ]
         ]
         #text(
           size: size-body,
           fill: color-secondary,
-          elements.join([ #h(3pt) • #h(3pt) ])
+          elements.map(render_md).join([ #h(3pt) • #h(3pt) ])
         )
       ]
     }

@@ -1,4 +1,5 @@
 #import "../theme.typ": *
+#import "../../../core/markdown.typ": render_md
 
 #let section_title(title) = {
   v(space-section)
@@ -9,7 +10,7 @@
       weight: "bold",
       fill: color-primary,
       tracking: 0.5pt,
-      upper(title)
+      render_md(upper(title))
     )
     #v(2pt)
     #line(length: 100%, stroke: 0.8pt + color-line)

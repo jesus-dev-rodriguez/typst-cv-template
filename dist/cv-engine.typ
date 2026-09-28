@@ -1,6 +1,6 @@
 // =============================================================================
 // CV Engine — Single-File Bundled Distribution
-// Generated automatically by scripts/bundle.py on 2026-09-26 22:47:51
+// Generated automatically by scripts/bundle.py on 2026-09-28 15:16:15
 // Engine compatible with Typst v0.15+
 // =============================================================================
 
@@ -85,6 +85,81 @@
   sys.inputs.at("paper", default: "a4")
 }
 
+// --- Core: markdown.typ ---
+/// Módulo nativo universal de procesamiento Markdown para Typst (v0.15+)
+/// 100% offline y desacoplado, sin paquetes externos de Typst Universe.
+///
+/// Soporta de forma segura y completa:
+/// - Enlaces: [texto](url) -> link("url")[texto]
+/// - Negrita: **texto** o __texto__
+/// - Cursiva: *texto* o _texto_
+/// - Negrita + Cursiva: ***texto*** o ___texto___
+/// - Tachado: ~~texto~~ -> strike[texto]
+/// - Resaltado: ==texto== -> highlight[texto]
+/// - Subrayado: <u>texto</u> o ++texto++ -> underline[texto]
+/// - Superíndice: ^texto^ -> super[texto]
+/// - Subíndice: ~texto~ -> sub[texto]
+/// - Citas / Blockquotes: > cita -> quote[cita]
+/// - Código en línea: `código`
+/// - Párrafos múltiples con saltos de línea dobles
+/// - Escape automático de caracteres propios de Typst (#, $, @) para evitar
+///   colisiones de sintaxis con términos técnicos (C#, @usuario, $1000).
+
+#let render_md(input) = {
+  if input == none { return none }
+  if type(input) == content { return input }
+  let s = str(input)
+  if s == "" { return "" }
+
+  // 1. Escapar caracteres sintácticos de Typst (#, $, @)
+  let t = s.replace("#", "\\#").replace("$", "\\$").replace("@", "\\@")
+
+  // 2. Enlaces Markdown: [texto](url) -> #link("url")[texto]
+  t = t.replace(regex("\[(.*?)\]\((.*?)\)"), m => {
+    let target = m.captures.at(1).replace("\\#", "#")
+    "#link(\"" + target + "\")[" + m.captures.at(0) + "]"
+  })
+
+  // 3. Negrita + Cursiva: ***texto*** o ___texto___ -> #strong[#emph[texto]]
+  t = t.replace(regex("\*\*\*(.*?)\*\*\*"), m => "#strong[#emph[" + m.captures.at(0) + "]]")
+  t = t.replace(regex("___(.*?)___"), m => "#strong[#emph[" + m.captures.at(0) + "]]")
+
+  // 4. Negrita: **texto** o __texto__ -> #strong[texto]
+  t = t.replace(regex("\*\*(.*?)\*\*"), m => "#strong[" + m.captures.at(0) + "]")
+  t = t.replace(regex("__(.*?)__"), m => "#strong[" + m.captures.at(0) + "]")
+
+  // 5. Tachado: ~~texto~~ -> #strike[texto]
+  t = t.replace(regex("~~(.*?)~~"), m => "#strike[" + m.captures.at(0) + "]")
+
+  // 6. Resaltado: ==texto== -> #highlight[texto]
+  t = t.replace(regex("==(.*?)=="), m => "#highlight[" + m.captures.at(0) + "]")
+
+  // 7. Subrayado: <u>texto</u> o ++texto++ -> #underline[texto]
+  t = t.replace(regex("<u>(.*?)</u>"), m => "#underline[" + m.captures.at(0) + "]")
+  t = t.replace(regex("\+\+(.*?)\+\+"), m => "#underline[" + m.captures.at(0) + "]")
+
+  // 8. Superíndice: ^texto^ -> #super[texto]
+  t = t.replace(regex("\^([^\^\s]+?)\^"), m => "#super[" + m.captures.at(0) + "]")
+
+  // 9. Subíndice: ~texto~ -> #sub[texto] (después de ~~tachado~~)
+  t = t.replace(regex("(^|[^\~])\~([^\~\s]+?)\~([^\~]|$)"), m => m.captures.at(0) + "#sub[" + m.captures.at(1) + "]" + m.captures.at(2))
+
+  // 10. Cursiva con asteriscos: *texto* -> #emph[texto]
+  t = t.replace(regex("(^|[^\*])\*([^\*\n]+?)\*([^\*]|$)"), m => m.captures.at(0) + "#emph[" + m.captures.at(1) + "]" + m.captures.at(2))
+
+  // 11. Cursiva con guiones bajos: _texto_ -> #emph[texto]
+  t = t.replace(regex("(^|[^\w])_([^\_\n]+?)_([^\w]|$)"), m => m.captures.at(0) + "#emph[" + m.captures.at(1) + "]" + m.captures.at(2))
+
+  // 12. Citas / Blockquotes al inicio de línea: > cita -> #quote[...]
+  t = t.replace(regex("(^|\n)>\s*([^\n]+)"), m => m.captures.at(0) + "#quote[" + m.captures.at(1) + "]")
+
+  // 13. Sanitizar asteriscos o guiones bajos huérfanos para evitar errores de delimitador
+  t = t.replace("*", "\\*")
+  t = t.replace(regex("(^|\s)_"), m => m.captures.at(0) + "\\_")
+
+  eval(t, mode: "markup")
+}
+
 // =============================================================================
 // Template: HARVARD
 // =============================================================================
@@ -127,7 +202,7 @@
         size: size-section,
         weight: "bold",
         fill: color-primary,
-        upper(title)
+        render_md(upper(title))
       )
       #v(1.5pt)
       #line(length: 100%, stroke: 0.6pt + color-line)
@@ -152,8 +227,8 @@
         #grid(
           columns: (1fr, auto),
           align: (left + top, right + top),
-          text(weight: "bold", size: size-body, primary-left),
-          text(weight: "medium", size: size-sub, primary-right)
+          text(weight: "bold", size: size-body, render_md(primary-left)),
+          text(weight: "medium", size: size-sub, render_md(primary-right))
         )
       ]
 
@@ -163,22 +238,22 @@
         #grid(
           columns: (1fr, auto),
           align: (left + top, right + top),
-          text(style: "italic", size: size-body, secondary-left),
-          text(style: "italic", size: size-sub, fill: color-muted, secondary-right)
+          text(style: "italic", size: size-body, render_md(secondary-left)),
+          text(style: "italic", size: size-sub, fill: color-muted, render_md(secondary-right))
         )
       ]
 
       // Descripción en párrafo si existe
       #if description != none and description != "" [
         #v(1.5pt)
-        #text(size: size-body, fill: color-secondary, description)
+        #text(size: size-body, fill: color-secondary, render_md(description))
       ]
 
       // Viñetas o logros asociados
       #if items.len() > 0 [
         #v(1.5pt)
         #list(
-          ..items.map(it => text(size: size-body, fill: color-secondary, it)),
+          ..items.map(it => text(size: size-body, fill: color-secondary, render_md(it))),
           spacing: 3pt,
           tight: true
         )
@@ -196,14 +271,14 @@
           size: size-name,
           weight: "bold",
           tracking: 0.5pt,
-          datos.at("nombre_completo", default: datos.at("name", default: ""))
+          render_md(datos.at("nombre_completo", default: datos.at("name", default: "")))
         )
 
         // Título o rol
         #let title = datos.at("titulo", default: datos.at("title", default: ""))
         #if title != "" [
           #v(2pt)
-          #text(size: size-title, style: "italic", fill: color-secondary, title)
+          #text(size: size-title, style: "italic", fill: color-secondary, render_md(title))
         ]
 
         #v(3pt)
@@ -218,14 +293,14 @@
             let target-url = c.at("url", default: none)
 
             if target-url != none and target-url != "" {
-              rendered-items.push(link(target-url, text(fill: color-link, val)))
+              rendered-items.push(link(target-url, text(fill: color-link, render_md(val))))
             } else if val.starts-with("http://") or val.starts-with("https://") {
               let clean = val.replace("https://", "").replace("http://", "")
-              rendered-items.push(link(val, text(fill: color-link, clean)))
+              rendered-items.push(link(val, text(fill: color-link, render_md(clean))))
             } else if val.contains("@") {
-              rendered-items.push(link("mailto:" + val, text(fill: color-link, val)))
+              rendered-items.push(link("mailto:" + val, text(fill: color-link, render_md(val))))
             } else {
-              rendered-items.push(text(val))
+              rendered-items.push(text(render_md(val)))
             }
           }
         } else if type(contact-raw) == dictionary {
@@ -233,11 +308,11 @@
             if val != "" and val != none {
               if val.starts-with("http://") or val.starts-with("https://") {
                 let clean = val.replace("https://", "").replace("http://", "")
-                rendered-items.push(link(val, text(fill: color-link, clean)))
+                rendered-items.push(link(val, text(fill: color-link, render_md(clean))))
               } else if val.contains("@") {
-                rendered-items.push(link("mailto:" + val, text(fill: color-link, val)))
+                rendered-items.push(link("mailto:" + val, text(fill: color-link, render_md(val))))
               } else {
-                rendered-items.push(text(val))
+                rendered-items.push(text(render_md(val)))
               }
             }
           }
@@ -265,12 +340,14 @@
   }
 
   // [renderers/text_renderer.typ]
-  /// Renderiza un bloque de texto o párrafo justificado con su título de sección
+  /// Renderiza un bloque de texto o párrafo justificado con su título de sección (con soporte Markdown)
   let render_text(title, content) = {
     if content != none and content != "" {
       section_title(title)
-      par(justify: true, leading: 0.65em)[
-        #text(size: size-body, fill: color-secondary, content)
+      block(spacing: space-item)[
+        #set par(justify: true, leading: 0.65em)
+        #set text(size: size-body, fill: color-secondary)
+        #render_md(content)
       ]
     }
   }
@@ -314,12 +391,12 @@
 
         block(width: 100%, spacing: space-item)[
           #if cat != "" [
-            #text(weight: "bold", size: size-body, cat + ": ")
+            #text(weight: "bold", size: size-body)[#render_md(cat): ]
           ]
           #text(
             size: size-body,
             fill: color-secondary,
-            elements.join([ #h(3pt) • #h(3pt) ])
+            elements.map(render_md).join([ #h(3pt) • #h(3pt) ])
           )
         ]
       }
@@ -334,7 +411,7 @@
 
       block(width: 100%, spacing: space-item)[
         #list(
-          ..items.map(it => text(size: size-body, fill: color-secondary, it)),
+          ..items.map(it => text(size: size-body, fill: color-secondary, render_md(it))),
           spacing: 4pt,
           tight: true
         )
@@ -377,6 +454,8 @@
       leading: 0.6em,
     )
 
+    show link: set text(fill: color-link)
+
     // Renderizar encabezado automáticamente si hay datos personales
     if "datos_personales" in cv-data {
       cv_header(cv-data.datos_personales)
@@ -387,7 +466,7 @@
       let tipo = seccion.at("tipo", default: "texto")
       let titulo = seccion.at("titulo", default: "")
 
-      if tipo == "texto" [
+      if tipo == "texto" or tipo == "markdown" [
         #render_text(titulo, seccion.at("contenido", default: ""))
       ] else if tipo == "entradas" [
         #render_entries(titulo, seccion.at("items", default: ()))
@@ -447,7 +526,7 @@
         weight: "bold",
         fill: color-primary,
         tracking: 0.5pt,
-        upper(title)
+        render_md(upper(title))
       )
       #v(2pt)
       #line(length: 100%, stroke: 0.8pt + color-line)
@@ -471,8 +550,8 @@
         #grid(
           columns: (1fr, auto),
           align: (left + top, right + top),
-          text(weight: "bold", size: size-body, fill: color-primary, primary-left),
-          text(weight: "medium", size: size-sub, fill: color-muted, primary-right)
+          text(weight: "bold", size: size-body, fill: color-primary, render_md(primary-left)),
+          text(weight: "medium", size: size-sub, fill: color-muted, render_md(primary-right))
         )
       ]
 
@@ -482,22 +561,22 @@
         #grid(
           columns: (1fr, auto),
           align: (left + top, right + top),
-          text(weight: "medium", size: size-body, fill: color-secondary, secondary-left),
-          text(size: size-sub, fill: color-muted, secondary-right)
+          text(weight: "medium", size: size-body, fill: color-secondary, render_md(secondary-left)),
+          text(size: size-sub, fill: color-muted, render_md(secondary-right))
         )
       ]
 
       // Descripción en párrafo
       #if description != none and description != "" [
         #v(1.5pt)
-        #text(size: size-body, fill: color-secondary, description)
+        #text(size: size-body, fill: color-secondary, render_md(description))
       ]
 
       // Viñetas o logros asociados
       #if items.len() > 0 [
         #v(1.5pt)
         #list(
-          ..items.map(it => text(size: size-body, fill: color-secondary, it)),
+          ..items.map(it => text(size: size-body, fill: color-secondary, render_md(it))),
           spacing: 3pt,
           tight: true
         )
@@ -521,14 +600,14 @@
         let target-url = c.at("url", default: none)
 
         if target-url != none and target-url != "" {
-          rendered-items.push(link(target-url, text(fill: color-link, weight: "medium", val)))
+          rendered-items.push(link(target-url, text(fill: color-link, weight: "medium", render_md(val))))
         } else if val.starts-with("http://") or val.starts-with("https://") {
           let clean = val.replace("https://", "").replace("http://", "")
-          rendered-items.push(link(val, text(fill: color-link, weight: "medium", clean)))
+          rendered-items.push(link(val, text(fill: color-link, weight: "medium", render_md(clean))))
         } else if val.contains("@") {
-          rendered-items.push(link("mailto:" + val, text(fill: color-link, weight: "medium", val)))
+          rendered-items.push(link("mailto:" + val, text(fill: color-link, weight: "medium", render_md(val))))
         } else {
-          rendered-items.push(text(fill: color-secondary, val))
+          rendered-items.push(text(fill: color-secondary, render_md(val)))
         }
       }
     } else if type(contact-raw) == dictionary {
@@ -536,11 +615,11 @@
         if val != "" and val != none {
           if val.starts-with("http://") or val.starts-with("https://") {
             let clean = val.replace("https://", "").replace("http://", "")
-            rendered-items.push(link(val, text(fill: color-link, weight: "medium", clean)))
+            rendered-items.push(link(val, text(fill: color-link, weight: "medium", render_md(clean))))
           } else if val.contains("@") {
-            rendered-items.push(link("mailto:" + val, text(fill: color-link, weight: "medium", val)))
+            rendered-items.push(link("mailto:" + val, text(fill: color-link, weight: "medium", render_md(val))))
           } else {
-            rendered-items.push(text(fill: color-secondary, val))
+            rendered-items.push(text(fill: color-secondary, render_md(val)))
           }
         }
       }
@@ -555,12 +634,12 @@
         weight: "bold",
         fill: color-primary,
         tracking: 0.3pt,
-        name
+        render_md(name)
       )
 
       #if title != "" [
         #v(1.5pt)
-        #text(size: size-title, weight: "medium", fill: color-accent, title)
+        #text(size: size-title, weight: "medium", fill: color-accent, render_md(title))
       ]
 
       #if total > 0 [
@@ -598,12 +677,14 @@
   }
 
   // [renderers/text_renderer.typ]
-  /// Renderiza un bloque de texto o párrafo justificado con su título de sección
+  /// Renderiza un bloque de texto o párrafo justificado con su título de sección (con soporte Markdown)
   let render_text(title, content) = {
     if content != none and content != "" {
       section_title(title)
-      par(justify: true, leading: 0.65em)[
-        #text(size: size-body, fill: color-secondary, content)
+      block(spacing: space-item)[
+        #set par(justify: true, leading: 0.65em)
+        #set text(size: size-body, fill: color-secondary)
+        #render_md(content)
       ]
     }
   }
@@ -646,12 +727,12 @@
 
         block(width: 100%, spacing: space-item)[
           #if cat != "" [
-            #text(weight: "bold", size: size-body, fill: color-primary, cat + ": ")
+            #text(weight: "bold", size: size-body, fill: color-primary)[#render_md(cat): ]
           ]
           #text(
             size: size-body,
             fill: color-secondary,
-            elements.join([ #h(3pt) • #h(3pt) ])
+            elements.map(render_md).join([ #h(3pt) • #h(3pt) ])
           )
         ]
       }
@@ -666,7 +747,7 @@
 
       block(width: 100%, spacing: space-item)[
         #list(
-          ..items.map(it => text(size: size-body, fill: color-secondary, it)),
+          ..items.map(it => text(size: size-body, fill: color-secondary, render_md(it))),
           spacing: 4pt,
           tight: true
         )
@@ -710,6 +791,8 @@
       leading: 0.6em,
     )
 
+    show link: set text(fill: color-link)
+
     // Renderizar encabezado automáticamente si hay datos personales
     if "datos_personales" in cv-data {
       cv_header(cv-data.datos_personales)
@@ -720,7 +803,7 @@
       let tipo = seccion.at("tipo", default: "texto")
       let titulo = seccion.at("titulo", default: "")
 
-      if tipo == "texto" [
+      if tipo == "texto" or tipo == "markdown" [
         #render_text(titulo, seccion.at("contenido", default: ""))
       ] else if tipo == "entradas" [
         #render_entries(titulo, seccion.at("items", default: ()))

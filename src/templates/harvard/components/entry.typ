@@ -1,4 +1,5 @@
 #import "../theme.typ": *
+#import "../../../core/markdown.typ": render_md
 
 /// Representa una entrada estándar de CV estilo Harvard
 /// Soporta dos líneas con alineación izquierda/derecha y una lista de viñetas opcional
@@ -16,8 +17,8 @@
       #grid(
         columns: (1fr, auto),
         align: (left + top, right + top),
-        text(weight: "bold", size: size-body, primary-left),
-        text(weight: "medium", size: size-sub, primary-right)
+        text(weight: "bold", size: size-body, render_md(primary-left)),
+        text(weight: "medium", size: size-sub, render_md(primary-right))
       )
     ]
 
@@ -27,22 +28,22 @@
       #grid(
         columns: (1fr, auto),
         align: (left + top, right + top),
-        text(style: "italic", size: size-body, secondary-left),
-        text(style: "italic", size: size-sub, fill: color-muted, secondary-right)
+        text(style: "italic", size: size-body, render_md(secondary-left)),
+        text(style: "italic", size: size-sub, fill: color-muted, render_md(secondary-right))
       )
     ]
 
     // Descripción en párrafo si existe
     #if description != none and description != "" [
       #v(1.5pt)
-      #text(size: size-body, fill: color-secondary, description)
+      #text(size: size-body, fill: color-secondary, render_md(description))
     ]
 
     // Viñetas o logros asociados
     #if items.len() > 0 [
       #v(1.5pt)
       #list(
-        ..items.map(it => text(size: size-body, fill: color-secondary, it)),
+        ..items.map(it => text(size: size-body, fill: color-secondary, render_md(it))),
         spacing: 3pt,
         tight: true
       )

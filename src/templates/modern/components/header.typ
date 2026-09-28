@@ -1,5 +1,6 @@
 #import "../theme.typ": *
 #import "../../../core/media.typ": render_avatar
+#import "../../../core/markdown.typ": render_md
 
 /// Renderiza el encabezado moderno, adaptándose dinámicamente si existe foto de perfil
 #let cv_header(datos) = {
@@ -16,14 +17,14 @@
       let target-url = c.at("url", default: none)
 
       if target-url != none and target-url != "" {
-        rendered-items.push(link(target-url, text(fill: color-link, weight: "medium", val)))
+        rendered-items.push(link(target-url, text(fill: color-link, weight: "medium", render_md(val))))
       } else if val.starts-with("http://") or val.starts-with("https://") {
         let clean = val.replace("https://", "").replace("http://", "")
-        rendered-items.push(link(val, text(fill: color-link, weight: "medium", clean)))
+        rendered-items.push(link(val, text(fill: color-link, weight: "medium", render_md(clean))))
       } else if val.contains("@") {
-        rendered-items.push(link("mailto:" + val, text(fill: color-link, weight: "medium", val)))
+        rendered-items.push(link("mailto:" + val, text(fill: color-link, weight: "medium", render_md(val))))
       } else {
-        rendered-items.push(text(fill: color-secondary, val))
+        rendered-items.push(text(fill: color-secondary, render_md(val)))
       }
     }
   } else if type(contact-raw) == dictionary {
@@ -31,11 +32,11 @@
       if val != "" and val != none {
         if val.starts-with("http://") or val.starts-with("https://") {
           let clean = val.replace("https://", "").replace("http://", "")
-          rendered-items.push(link(val, text(fill: color-link, weight: "medium", clean)))
+          rendered-items.push(link(val, text(fill: color-link, weight: "medium", render_md(clean))))
         } else if val.contains("@") {
-          rendered-items.push(link("mailto:" + val, text(fill: color-link, weight: "medium", val)))
+          rendered-items.push(link("mailto:" + val, text(fill: color-link, weight: "medium", render_md(val))))
         } else {
-          rendered-items.push(text(fill: color-secondary, val))
+          rendered-items.push(text(fill: color-secondary, render_md(val)))
         }
       }
     }
@@ -50,12 +51,12 @@
       weight: "bold",
       fill: color-primary,
       tracking: 0.3pt,
-      name
+      render_md(name)
     )
 
     #if title != "" [
       #v(1.5pt)
-      #text(size: size-title, weight: "medium", fill: color-accent, title)
+      #text(size: size-title, weight: "medium", fill: color-accent, render_md(title))
     ]
 
     #if total > 0 [

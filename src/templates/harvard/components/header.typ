@@ -1,4 +1,5 @@
 #import "../theme.typ": *
+#import "../../../core/markdown.typ": render_md
 
 /// Renderiza la cabecera Harvard procesando dinámicamente cualquier tipo de contacto
 #let cv_header(datos) = {
@@ -9,14 +10,14 @@
         size: size-name,
         weight: "bold",
         tracking: 0.5pt,
-        datos.at("nombre_completo", default: datos.at("name", default: ""))
+        render_md(datos.at("nombre_completo", default: datos.at("name", default: "")))
       )
 
       // Título o rol
       #let title = datos.at("titulo", default: datos.at("title", default: ""))
       #if title != "" [
         #v(2pt)
-        #text(size: size-title, style: "italic", fill: color-secondary, title)
+        #text(size: size-title, style: "italic", fill: color-secondary, render_md(title))
       ]
 
       #v(3pt)
@@ -31,14 +32,14 @@
           let target-url = c.at("url", default: none)
 
           if target-url != none and target-url != "" {
-            rendered-items.push(link(target-url, text(fill: color-link, val)))
+            rendered-items.push(link(target-url, text(fill: color-link, render_md(val))))
           } else if val.starts-with("http://") or val.starts-with("https://") {
             let clean = val.replace("https://", "").replace("http://", "")
-            rendered-items.push(link(val, text(fill: color-link, clean)))
+            rendered-items.push(link(val, text(fill: color-link, render_md(clean))))
           } else if val.contains("@") {
-            rendered-items.push(link("mailto:" + val, text(fill: color-link, val)))
+            rendered-items.push(link("mailto:" + val, text(fill: color-link, render_md(val))))
           } else {
-            rendered-items.push(text(val))
+            rendered-items.push(text(render_md(val)))
           }
         }
       } else if type(contact-raw) == dictionary {
@@ -46,11 +47,11 @@
           if val != "" and val != none {
             if val.starts-with("http://") or val.starts-with("https://") {
               let clean = val.replace("https://", "").replace("http://", "")
-              rendered-items.push(link(val, text(fill: color-link, clean)))
+              rendered-items.push(link(val, text(fill: color-link, render_md(clean))))
             } else if val.contains("@") {
-              rendered-items.push(link("mailto:" + val, text(fill: color-link, val)))
+              rendered-items.push(link("mailto:" + val, text(fill: color-link, render_md(val))))
             } else {
-              rendered-items.push(text(val))
+              rendered-items.push(text(render_md(val)))
             }
           }
         }

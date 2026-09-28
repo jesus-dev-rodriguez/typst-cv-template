@@ -71,7 +71,33 @@ Puedes elegir el diseño de tu CV especificando la clave `"plantilla"` en la ra�
 
 La lista `secciones` define el contenido del CV. **El orden en el que coloques las secciones en el JSON es exactamente el orden en el que se renderizarán en el PDF.**
 
-Cada sección debe especificar un `"titulo"` y un `"tipo"`. Existen **4 tipos universales**:
+Cada sección debe especificar un `"titulo"` y un `"tipo"`. Existen **5 tipos universales** (`texto`, `entradas`, `agrupado`, `lista` y `markdown`).
+
+### 🌟 Soporte Universal a Markdown en el 100% de los Campos
+El motor Typst soporta formateo Markdown en **absolutamente todos los campos de texto del CV**:
+- `datos_personales.nombre_completo` y `datos_personales.titulo`.
+- `datos_personales.contacto[].valor`.
+- `secciones[].titulo` (en todos los tipos de sección).
+- `secciones[].contenido` (en `texto` y `markdown`).
+- `items[].primario_izq`, `items[].primario_der` (fechas), `items[].secundario_izq`, `items[].secundario_der` (ubicación), `items[].descripcion` y `items[].vinetas` (en `entradas`).
+- `grupos[].categoria` y `grupos[].elementos` (en `agrupado`).
+- `elementos` (en `lista`).
+
+#### Sintaxis Markdown Soportada:
+| Elemento | Sintaxis Markdown | Ejemplo |
+| :--- | :--- | :--- |
+| **Negrita** | `**texto**` o `__texto__` | `**Backend Lead**` |
+| **Cursiva** | `*texto*` o `_texto_` | `*Remoto*` o `_Part-time_` |
+| **Negrita + Cursiva** | `***texto***` | `***Cum Laude***` |
+| **Tachado** | `~~texto~~` | `~~V1 Legacy~~` |
+| **Resaltado** | `==texto==` | `==Nuevo Servicio==` |
+| **Subrayado** | `<u>texto</u>` o `++texto++` | `<u>Destacado</u>` |
+| **Superíndice** | `^texto^` | `Next.js^v15^` |
+| **Subíndice** | `~texto~` | `CO~2~` |
+| **Enlaces Clicables** | `[texto](url)` | `[Ver Proyecto](https://github.com)` |
+| **Código en Línea** | `` `código` `` | `` `docker compose` `` |
+| **Citas / Blockquotes** | `> cita` | `> Pasión por la calidad de software` |
+| **Párrafos Múltiples** | Doble salto de línea (`\n\n`) | `Párrafo 1.\n\nPárrafo 2.` |
 
 ### Tipo 1: `"texto"` (Párrafos corridos)
 Ideal para: **Objetivo Profesional**, **Perfil Ejecutivo**, **Filosofía de Trabajo**, **Declaración de Interés**.
@@ -80,7 +106,7 @@ Ideal para: **Objetivo Profesional**, **Perfil Ejecutivo**, **Filosofía de Trab
 {
   "titulo": "Objetivo Profesional",
   "tipo": "texto",
-  "contenido": "Ingeniero de Software enfocado en desarrollo backend y sistemas distribuidos. Cuento con experiencia en diseño de arquitecturas limpias y metodologías ágiles..."
+  "contenido": "Ingeniero de Software enfocado en **Go**, **Kubernetes** y arquitecturas de microservicios. Puedes ver mis proyectos en [GitHub](https://github.com/usuario)..."
 }
 ```
 
@@ -176,6 +202,21 @@ Ideal para: **Pasatiempos**, **Lecturas Recomendadas**, **Intereses de Investiga
     "Lecturas sobre arquitectura de software, Domain-Driven Design y sistemas concurrentes.",
     "Colaboración activa en proyectos de código abierto."
   ]
+}
+```
+
+---
+
+### Tipo 5: `"markdown"` (Bloque multilínea libre)
+Ideal para: **Cartas de Presentación**, **Perfiles Extensos**, **Descripciones Detalladas de Proyectos**.
+
+Permite escribir párrafos libres, listas y enlaces directamente en Markdown dentro del campo `contenido`:
+
+```json
+{
+  "titulo": "Perfil y Filosofía de Trabajo",
+  "tipo": "markdown",
+  "contenido": "Apasionado por el desarrollo de **sistemas distribuidos de alto rendimiento**.\n\nHe contribuido en librerías open-source disponibles en [GitHub](https://github.com/usuario) y participado activamente en comunidades de desarrollo."
 }
 ```
 

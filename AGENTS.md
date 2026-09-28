@@ -30,6 +30,7 @@ cv/
 ├── src/
 │   ├── core/
 │   │   ├── inputs.typ             # load_cv_data(), get_template_name(), get_paper_format() (sys.inputs)
+│   │   ├── markdown.typ           # render_md() universal nativo (negrita, cursiva, links, código, escape seguro)
 │   │   └── media.typ              # render_avatar() universal (rutas locales y Base64 URIs)
 │   └── templates/                 # Ecosistema desacoplado de plantillas
 │       ├── harvard/               # Plantilla clásica académica serif (1 columna)
@@ -117,4 +118,5 @@ flowchart TD
 | **ADR-009** | 2026-09-26 | Arquitectura Multi-Plantilla con Router Dinámico y Soporte de Foto | Modularizar `src/templates/` (`harvard`, `modern`) y `src/core/media.typ` permitiendo alternar templates y avatares (archivos locales o Base64) desde el JSON con retrocompatibilidad absoluta. |
 | **ADR-010** | 2026-09-26 | Soporte Universal de Entrada con `sys.inputs` y Parametrización en `Makefile` | Desacoplar la E/S de Typst permitiendo cargar datos desde archivos externos o strings JSON en memoria (APIs/SPAs), y seleccionar plantilla (`TEMPLATE=`) y dataset (`DATA=`) desde la línea de comandos y el Makefile. |
 | **ADR-012** | 2026-09-26 | Estandarización de Contrato de Contribución Abierta de Plantillas | Publicar guía formal para diseñadores (`docs/CONTRIBUTING_TEMPLATES.md`) para extender el catálogo de plantillas con autodescubrimiento en `bundle.py` y validación local de compilación. |
+| **ADR-013** | 2026-09-28 | Soporte Nativo y Universal a Markdown en Esquema y Motor Typst | Implementar `src/core/markdown.typ` con `render_md()` extendido (negrita `**`, cursiva `*`/`_`, tachado `~~`, resaltado `==`, subrayado `<u>`/`++`, super/subíndices `^`/`~`, citas `>`, enlaces, código y párrafos), soporte transversal en el 100% de los campos de datos (nombre, títulos, contactos, fechas, ubicaciones, categorías, viñetas), primitiva `"markdown"` y enriquecimiento con `markdownDescription` en `schema/cv.schema.json`. Cero dependencias externas y 100% offline. |
 

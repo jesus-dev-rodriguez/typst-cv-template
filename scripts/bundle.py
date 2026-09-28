@@ -64,9 +64,9 @@ def bundle(src_dir="src", out_file="dist/cv-engine.typ"):
     all_external_pkgs = []
     bundle_parts = []
 
-    # 1. Procesar Core (media.typ, inputs.typ)
+    # 1. Procesar Core (media.typ, inputs.typ, markdown.typ)
     core_dir = os.path.join(src_dir, "core")
-    core_files = ["media.typ", "inputs.typ"]
+    core_files = ["media.typ", "inputs.typ", "markdown.typ"]
     core_contents = []
 
     for cf in core_files:
